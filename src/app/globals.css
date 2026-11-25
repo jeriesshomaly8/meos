@@ -1,0 +1,308 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * ─────────────────────────────────────────────────────────────────────────
+ * MeOS design language — "warm paper"
+ *
+ * Mobile-first personal memory app. The visual model is a sheet of warm
+ * paper with white cards resting on it, lit from directly above.
+ *
+ *   Surfaces  warm cream paper, pure-white cards, hairline warm borders
+ *   Text      warm ink (never pure black, never cool gray)
+ *   Accent    ONE terracotta. Category hues are labels, not decoration —
+ *             they appear at low chroma in icon chips only.
+ *   Type      Fraunces (serif) for display, system sans for everything
+ *             the user reads or taps. Native feel on iOS/Android.
+ *   Shape     generous radii, no visible card borders in light mode —
+ *             separation comes from elevation and space, not strokes.
+ * ─────────────────────────────────────────────────────────────────────────
+ */
+
+@theme inline {
+  /* --- Type ------------------------------------------------------------ */
+  /* Body is the platform UI font on purpose: it makes the app feel native
+     rather than "a website". Display is the only imported face. */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue",
+    sans-serif;
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+  /* Alias kept because vendored shadcn parts ship `font-heading`. */
+  --font-heading: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* Hand-tuned ramp. Body sits at 17px — iOS default, comfortably above
+     the 16px floor. Every size below is a step on this ramp; no one-offs. */
+  --text-2xs: 0.6875rem; /* 11 — chip labels, tab labels */
+  --text-2xs--line-height: 1.2;
+  --text-xs: 0.75rem; /* 12 — meta, timestamps */
+  --text-xs--line-height: 1.4;
+  --text-sm: 0.8125rem; /* 13 — secondary row text */
+  --text-sm--line-height: 1.45;
+  --text-base: 0.9375rem; /* 15 — dense UI text */
+  --text-base--line-height: 1.5;
+  --text-body: 1.0625rem; /* 17 — reading + primary row text */
+  --text-body--line-height: 1.5;
+  --text-lg: 1.1875rem; /* 19 — section leads */
+  --text-lg--line-height: 1.4;
+  --text-xl: 1.375rem; /* 22 — card titles */
+  --text-xl--line-height: 1.3;
+  --text-2xl: 1.75rem; /* 28 — screen titles */
+  --text-2xl--line-height: 1.2;
+  --text-3xl: 2.125rem; /* 34 — greeting */
+  --text-3xl--line-height: 1.12;
+  --text-4xl: 2.75rem; /* 44 — auth / hero */
+  --text-4xl--line-height: 1.05;
+
+  /* --- Shape ------------------------------------------------------------ */
+  --radius-xs: 0.375rem;
+  --radius-sm: 0.625rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1.25rem; /* the card radius */
+  --radius-xl: 1.75rem;
+  --radius-2xl: 2.25rem;
+  --radius-3xl: 3rem;
+  --radius-4xl: 4rem;
+
+  /* --- Elevation --------------------------------------------------------
+     One light source, directly above. Every shadow is warm-tinted (never
+     neutral black) so cards sit ON the paper instead of floating over a
+     hole punched in it. */
+  --shadow-card: 0 1px 2px oklch(0.28 0.02 60 / 0.04), 0 6px 16px -10px oklch(0.28 0.02 60 / 0.14);
+  --shadow-raised: 0 2px 4px oklch(0.28 0.02 60 / 0.05),
+    0 16px 32px -18px oklch(0.28 0.02 60 / 0.22);
+  --shadow-sheet: 0 -8px 40px -12px oklch(0.28 0.02 60 / 0.22);
+  --shadow-accent: 0 4px 14px -4px oklch(0.58 0.13 42 / 0.5);
+
+  /* --- Motion -----------------------------------------------------------
+     Entrances ease-out and land in ~180ms. Anything slower reads as lag on
+     a phone; anything faster reads as a glitch. */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-soft: cubic-bezier(0.55, 0, 1, 0.45);
+
+  /* --- Color (mapped from the raw tokens below) ------------------------- */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+
+  /* Hairline used *inside* grouped lists — lighter than --border so rows
+     read as one object rather than a stack of separate cards. */
+  --color-hairline: var(--hairline);
+
+  --color-cat-person: var(--cat-person);
+  --color-cat-date: var(--cat-date);
+  --color-cat-reminder: var(--cat-reminder);
+  --color-cat-food: var(--cat-food);
+  --color-cat-recipe: var(--cat-recipe);
+  --color-cat-document: var(--cat-document);
+  --color-cat-note: var(--cat-note);
+
+  --color-chart-1: var(--cat-person);
+  --color-chart-2: var(--cat-recipe);
+  --color-chart-3: var(--cat-date);
+  --color-chart-4: var(--cat-food);
+  --color-chart-5: var(--cat-document);
+}
+
+/* ---------------------------------------------------------------------- */
+/* Light — warm cream paper, white cards, warm ink                        */
+/* ---------------------------------------------------------------------- */
+:root {
+  /* Consumed by vendored shadcn bits that read the raw var (sonner). */
+  --radius: 1.25rem;
+
+  --background: oklch(0.972 0.007 82);
+  --foreground: oklch(0.255 0.009 55);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.255 0.009 55);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.255 0.009 55);
+
+  --primary: oklch(0.575 0.132 42);
+  --primary-foreground: oklch(0.99 0.004 85);
+
+  /* Secondary = a slightly deeper wash of the paper, for chips and inset
+     fields. Never white — white is reserved for cards. */
+  --secondary: oklch(0.945 0.009 80);
+  --secondary-foreground: oklch(0.34 0.011 55);
+  --muted: oklch(0.945 0.009 80);
+  --muted-foreground: oklch(0.535 0.012 62);
+
+  --accent: oklch(0.93 0.022 45);
+  --accent-foreground: oklch(0.45 0.115 40);
+
+  --destructive: oklch(0.545 0.185 27);
+  --success: oklch(0.53 0.105 145);
+  --warning: oklch(0.66 0.125 72);
+
+  --border: oklch(0.905 0.009 78);
+  --hairline: oklch(0.925 0.007 78);
+  --input: oklch(0.9 0.009 78);
+  --ring: oklch(0.575 0.132 42);
+
+  /* Category hues — deliberately low chroma. They identify, they don't
+     compete with the terracotta accent for attention. */
+  --cat-person: oklch(0.565 0.115 22);
+  --cat-date: oklch(0.6 0.11 68);
+  --cat-reminder: oklch(0.605 0.13 48);
+  --cat-food: oklch(0.535 0.095 148);
+  --cat-recipe: oklch(0.545 0.08 205);
+  --cat-document: oklch(0.525 0.095 252);
+  --cat-note: oklch(0.545 0.1 318);
+}
+
+/* ---------------------------------------------------------------------- */
+/* Dark — warm charcoal, not blue-black. Cards lift, they don't glow.     */
+/* ---------------------------------------------------------------------- */
+.dark {
+  --background: oklch(0.185 0.007 58);
+  --foreground: oklch(0.935 0.005 80);
+  --card: oklch(0.232 0.008 58);
+  --card-foreground: oklch(0.935 0.005 80);
+  --popover: oklch(0.245 0.009 58);
+  --popover-foreground: oklch(0.935 0.005 80);
+
+  --primary: oklch(0.715 0.125 45);
+  --primary-foreground: oklch(0.19 0.02 42);
+
+  --secondary: oklch(0.285 0.009 58);
+  --secondary-foreground: oklch(0.9 0.005 80);
+  --muted: oklch(0.285 0.009 58);
+  --muted-foreground: oklch(0.705 0.011 68);
+
+  --accent: oklch(0.315 0.035 45);
+  --accent-foreground: oklch(0.86 0.06 48);
+
+  --destructive: oklch(0.67 0.175 27);
+  --success: oklch(0.7 0.1 148);
+  --warning: oklch(0.78 0.12 78);
+
+  --border: oklch(1 0 0 / 11%);
+  --hairline: oklch(1 0 0 / 8%);
+  --input: oklch(1 0 0 / 14%);
+  --ring: oklch(0.715 0.125 45);
+
+  --cat-person: oklch(0.72 0.1 22);
+  --cat-date: oklch(0.755 0.1 68);
+  --cat-reminder: oklch(0.74 0.11 48);
+  --cat-food: oklch(0.71 0.09 148);
+  --cat-recipe: oklch(0.715 0.075 205);
+  --cat-document: oklch(0.7 0.09 252);
+  --cat-note: oklch(0.715 0.095 318);
+}
+
+.dark {
+  /* Shadows can't do the work on a dark ground — swap to a lifted surface
+     plus a faint top highlight so cards still read as raised. */
+  --shadow-card: 0 1px 2px oklch(0 0 0 / 0.3);
+  --shadow-raised: 0 8px 28px -12px oklch(0 0 0 / 0.6);
+  --shadow-sheet: 0 -8px 40px -12px oklch(0 0 0 / 0.5);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply font-sans;
+    /* Stops iOS Safari inflating text in landscape. */
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    /* Grey tap flash is the loudest "this is a webpage" tell on mobile. */
+    -webkit-tap-highlight-color: transparent;
+    /* Stops the whole page rubber-banding behind the fixed tab bar. */
+    overscroll-behavior-y: none;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+  }
+
+  /* Numbers in dates, counters and countdowns must not jitter as they
+     change width. */
+  time,
+  [data-numeric] {
+    font-variant-numeric: tabular-nums;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  /* `display:flex` on a class silently defeats the HTML hidden attribute */
+  [hidden] {
+    display: none !important;
+  }
+
+  /* Inputs at <16px make iOS zoom on focus. Never let that happen. */
+  input,
+  textarea,
+  select {
+    font-size: max(1rem, var(--text-body));
+  }
+}
+
+@utility safe-b {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@utility safe-t {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Horizontal chip rails: scrollable, snapping, no visible scrollbar. */
+@utility rail {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  & > * {
+    scroll-snap-align: start;
+    flex: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
